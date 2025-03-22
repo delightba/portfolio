@@ -477,17 +477,28 @@
 
 
 
-
             <script src="config.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
             <script>
                 document.addEventListener("DOMContentLoaded", function () {
-                    emailjs.init(EMAILJS_PUBLIC_KEY);
+                    try {
+                        emailjs.init(EMAILJS_PUBLIC_KEY);
+                        console.log("EmailJS initialized successfully!");
+                    } catch (error) {
+                        console.error("Error initializing EmailJS:", error);
+                    }
+
+                    const form = document.querySelector("form");
+                    if (form) {
+                        form.addEventListener("submit", sendEmail);
+                    } else {
+                        console.warn("Form not found. Email functionality disabled.");
+                    }
                 });
-            
+
                 const sendEmail = (event) => {
                     event.preventDefault();
-            
+
                     emailjs.sendForm(
                         EMAILJS_SERVICE_ID,
                         EMAILJS_TEMPLATE_ID,
@@ -495,29 +506,60 @@
                     ).then(
                         (result) => {
                             console.log("Email sent successfully!", result.text);
-                            alert("Message sent successfully!");
-            
+                            showMessage("Message sent successfully!", true); // Show success message
+
                             // Reset the form fields
                             event.target.reset();
-            
-                            // Refresh the page after 2 seconds
-                            setTimeout(() => {
-                                location.reload();
-                            }, 2000);
                         },
                         (error) => {
                             console.error("Error sending email:", error.text);
-                            alert("Failed to send message. Please try again.");
+                            showMessage("Failed to send message. Please try again.", false); // Show error message
                         }
                     );
                 };
-            
-                // Attach event listener only if the form exists
-                document.addEventListener("DOMContentLoaded", function () {
-                    const form = document.querySelector("form");
-                    if (form) {
-                        form.addEventListener("submit", sendEmail);
-                    }
-                });
+
+                function showMessage(message, isSuccess) {
+                    const messageDiv = document.createElement("div");
+                    messageDiv.textContent = message;
+                    messageDiv.classList.add(isSuccess ? "success-message" : "error-message");
+                    document.body.appendChild(messageDiv);
+                    setTimeout(() => messageDiv.remove(), 3000); // Remove message after 3 seconds
+                }
+
+
             </script>
-            
+
+            <script>
+                function openmenu() {
+                    console.log("openmenu function called!");
+                    const sidemenu = document.getElementById("sidemenu");
+                    sidemenu.style.right = "0"; // Slide the menu into view
+                }
+
+                function closemenu() {
+                    console.log("closemenu function called!");
+                    const sidemenu = document.getElementById("sidemenu");
+                    sidemenu.style.right = "-200px"; // Slide the menu out of view
+                }
+            </script>
+
+            <script>
+                function opentab(tabName) {
+                    console.log("opentab function called with tab:", tabName);
+
+                    // Hide all tab contents
+                    const tabContents = document.querySelectorAll(".tab-content");
+                    tabContents.forEach(tab => tab.classList.remove("active-tab"));
+
+                    // Remove the active class from all tab links
+                    const tabLinks = document.querySelectorAll(".tab-links");
+                    tabLinks.forEach(link => link.classList.remove("active-link"));
+
+                    // Show the selected tab content
+                    document.getElementById(tabName).classList.add("active-tab");
+
+                    // Add the active class to the clicked tab link
+                    event.currentTarget.classList.add("active-link");
+                }
+            </script>
+</body>
